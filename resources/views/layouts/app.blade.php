@@ -816,7 +816,10 @@
                 <img src="{{ asset('img/logo.jpg') }}" alt="Logo Defkan Computer" class="nav-brand-img">
                 Defkan Computer
             </a>
-            <div class="nav-links">
+            <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Toggle Menu">
+                <i data-lucide="menu" id="mobile-menu-icon" class="icon icon-lg"></i>
+            </button>
+            <div class="nav-links" id="nav-links-menu">
                 <a href="/" class="nav-link">Beranda</a>
                 <a href="/produk" class="nav-link">Katalog</a>
                 <a href="/servis" class="nav-link">Servis</a>
@@ -1490,6 +1493,23 @@
             if (chatWidget) chatWidget.style.display = 'block';
             setupDragging();
             if (isLoggedIn()) initChatSilently();
+
+            // Mobile Menu Toggle
+            const menuToggle = document.getElementById('mobile-menu-toggle');
+            const navLinks = document.getElementById('nav-links-menu');
+            const menuIcon = document.getElementById('mobile-menu-icon');
+            if (menuToggle && navLinks) {
+                menuToggle.addEventListener('click', () => {
+                    navLinks.classList.toggle('active');
+                    const isActive = navLinks.classList.contains('active');
+                    if (isActive) {
+                        menuIcon.setAttribute('data-lucide', 'x');
+                    } else {
+                        menuIcon.setAttribute('data-lucide', 'menu');
+                    }
+                    lucide.createIcons();
+                });
+            }
         });
     </script>
 
