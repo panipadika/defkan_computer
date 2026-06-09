@@ -4,3 +4,8 @@
 !produk/**
 !produk_galeri/
 !produk_galeri/**
+!bukti_pembayaran/
+!bukti_pembayaran/**
+!bukti_pembayaran_servis/
+!bukti_pembayaran_servis/**
+
