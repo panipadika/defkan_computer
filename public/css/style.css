@@ -2349,6 +2349,7 @@ tr:hover td {
     margin: 0;
 }
 .qty-value[type=number] {
+    appearance: textfield;
     -moz-appearance: textfield;
 }
 
