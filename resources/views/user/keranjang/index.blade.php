@@ -147,7 +147,7 @@ function renderCartItems(items) {
         el.style.gap = '16px';
         el.innerHTML = `
             <input type="checkbox" class="cart-item-checkbox" data-id="${item.id}" onchange="handleItemCheck()" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); flex-shrink: 0;" checked>
-            <img src="${p.foto_url || '/img/placeholder.png'}" alt="${p.nama_produk}" class="cart-item-img" style="flex-shrink: 0;" onerror="this.src='https://placehold.co/400x300/EFF8FF/0EA5E9?text=Laptop'">
+            <img src="${p.foto_url || '/img/placeholder.png'}" alt="${p.nama_produk}" class="cart-item-img" style="flex-shrink: 0;" loading="lazy" onerror="this.src='https://placehold.co/400x300/EFF8FF/0EA5E9?text=Laptop'">
             <div style="flex: 1; min-width: 0;">
                 <h4 style="font-size: 16px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main);">${p.nama_produk || 'Produk'}</h4>
                 <p class="text-muted" style="font-size: 13px; margin-bottom: 8px;">Stok tersedia: ${p.stok ?? '-'}</p>

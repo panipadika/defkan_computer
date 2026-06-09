@@ -925,7 +925,7 @@
                 const details = order.detail || order.details || [];
                 const productPreview = details.slice(0, 3).map(d => {
                     const p = d.produk || {};
-                    return `<img src="${p.foto_url || '/img/placeholder.png'}" alt="" class="order-product-img">`;
+                    return `<img src="${p.foto_url || '/img/placeholder.png'}" alt="" class="order-product-img" loading="lazy">`;
                 }).join('');
                 const moreCount = details.length > 3 ? `<span class="text-muted" style="font-size:12px;">+${details.length - 3} lainnya</span>` : '';
 
@@ -978,7 +978,7 @@
                     const p = d.produk || {};
                     return `
                         <div class="order-product-row">
-                            <img src="${p.foto_url || '/img/placeholder.png'}" alt="" class="order-product-img">
+                            <img src="${p.foto_url || '/img/placeholder.png'}" alt="" class="order-product-img" loading="lazy">
                             <div style="flex: 1; min-width: 0;">
                                 <div style="font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.nama_produk || 'Produk'}</div>
                                 <div class="text-muted" style="font-size: 12px;">${d.jumlah}x @ ${formatRupiah(d.harga)}</div>

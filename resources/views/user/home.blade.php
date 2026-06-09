@@ -232,7 +232,7 @@
                     card.style.animationDelay = `${idx * 0.07}s`;
                     card.innerHTML = `
                     <div onclick="window.location='/produk'">
-                        <img src="${fotoUrl}" class="card-img" alt="${p.nama_produk}" onerror="this.src='https://placehold.co/400x300/EFF8FF/0EA5E9?text=Laptop'">
+                        <img src="${fotoUrl}" class="card-img" alt="${p.nama_produk}" loading="lazy" onerror="this.src='https://placehold.co/400x300/EFF8FF/0EA5E9?text=Laptop'">
                     </div>
                     <div class="card-body">
                         <p style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">${p.merek || ''}</p>

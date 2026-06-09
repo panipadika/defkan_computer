@@ -1754,7 +1754,7 @@
                     card.style.animationDelay = `${idx * 0.05}s`;
                     card.innerHTML = `
                                     <div class="catalog-img-wrap" onclick="showDetailModal(${produk.id_produk})">
-                                        <img src="${fotoUrl}" alt="${productName}" class="catalog-card-img" onerror="this.src='https://placehold.co/400x300/EFF8FF/0EA5E9?text=Laptop'">
+                                        <img src="${fotoUrl}" alt="${productName}" class="catalog-card-img" loading="lazy" onerror="this.src='https://placehold.co/400x300/EFF8FF/0EA5E9?text=Laptop'">
                                         <div class="catalog-top-badges">
                                             ${kategoriBadge}
                                             ${stokBadge}
