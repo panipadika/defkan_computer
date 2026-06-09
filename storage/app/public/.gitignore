@@ -1,2 +1,6 @@
 *
 !.gitignore
+!produk/
+!produk/**
+!produk_galeri/
+!produk_galeri/**
