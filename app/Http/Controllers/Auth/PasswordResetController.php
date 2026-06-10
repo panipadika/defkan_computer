@@ -46,9 +46,17 @@ class PasswordResetController extends Controller
                 ], 200);
             }
 
+            // Mapping error status dari Laravel ke Bahasa Indonesia
+            $errorMessage = 'Gagal mengirim email reset password. Silakan coba beberapa saat lagi.';
+            if ($status === Password::INVALID_USER) {
+                $errorMessage = 'Pengguna dengan email tersebut tidak ditemukan.';
+            } elseif ($status === Password::RESET_THROTTLED) {
+                $errorMessage = 'Permintaan reset terlalu sering. Harap tunggu beberapa saat sebelum mencoba lagi.';
+            }
+
             return response()->json([
                 'status' => 'error',
-                'message' => 'Gagal mengirim email reset password. Silakan coba beberapa saat lagi.',
+                'message' => $errorMessage,
             ], 400);
         } catch (\Throwable $e) {
             // Log detail error
