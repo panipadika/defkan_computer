@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ChatApiController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\User\KeranjangController;
 use App\Http\Controllers\User\RekomendasiLaptopController;
 use App\Http\Controllers\Shared\EkspedisiController;
@@ -18,6 +19,8 @@ Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail']);
+Route::post('/auth/reset-password', [PasswordResetController::class, 'reset']);
 
 Route::get('/produk/export', [ProdukController::class, 'export'])->middleware(['auth:sanctum', 'admin']);
 Route::get('/produk', [ProdukController::class, 'index']);

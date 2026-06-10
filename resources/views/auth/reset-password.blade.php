@@ -1,74 +1,53 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="auth-compact-page auth-login-page">
-        <div class="auth-card auth-login-card">
+    <div class="auth-compact-page auth-reset-page">
+        <div class="auth-card auth-reset-card">
             <div class="auth-decor auth-decor-right"></div>
 
             <div class="auth-card-content">
                 <div class="auth-header">
-                    <h2>Selamat Datang</h2>
-                    <p class="text-muted">Masuk ke akun Defkan Computer Anda</p>
+                    <h2>Reset Kata Sandi</h2>
+                    <p class="text-muted">Masukkan kata sandi baru untuk akun Anda</p>
                 </div>
 
-                <form id="login-form" class="auth-form">
+                <form id="reset-password-form" class="auth-form">
+                    <input type="hidden" id="token" value="{{ $token }}">
+                    
                     <div class="form-group auth-form-group">
-                        <label class="form-label auth-label">Email</label>
-                        <input type="email" id="email" class="form-control auth-control" placeholder="nama@email.com"
-                            required>
+                        <label class="form-label auth-label">Alamat Email</label>
+                        <input type="email" id="email" class="form-control auth-control" 
+                            value="{{ request()->query('email') }}" required readonly>
                     </div>
 
                     <div class="form-group auth-form-group">
-                        <label class="form-label auth-label">Password</label>
+                        <label class="form-label auth-label">Kata Sandi Baru</label>
                         <div class="auth-password-wrap">
                             <input type="password" id="password" class="form-control auth-control" placeholder="••••••••"
                                 required>
-                            <button type="button" id="toggle-password" onclick="togglePasswordVisibility()"
+                            <button type="button" id="toggle-password" onclick="togglePasswordVisibility('password', this)"
                                 class="auth-eye-btn" title="Lihat kata sandi">
                                 <i data-lucide="eye" class="icon"></i>
                             </button>
                         </div>
                     </div>
 
-                    <div class="auth-forgot-row">
-                        <a href="/forgot-password" class="text-primary-gradient auth-small-link">
-                            Lupa kata sandi?
-                        </a>
+                    <div class="form-group auth-form-group">
+                        <label class="form-label auth-label">Konfirmasi Kata Sandi Baru</label>
+                        <div class="auth-password-wrap">
+                            <input type="password" id="password_confirmation" class="form-control auth-control" placeholder="••••••••"
+                                required>
+                            <button type="button" id="toggle-password-confirm" onclick="togglePasswordVisibility('password_confirmation', this)"
+                                class="auth-eye-btn" title="Lihat kata sandi">
+                                <i data-lucide="eye" class="icon"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary auth-main-btn" id="btn-login">
-                        Masuk
+                    <button type="submit" class="btn btn-primary auth-main-btn" id="btn-submit">
+                        Simpan Kata Sandi
                     </button>
                 </form>
-
-                <div class="auth-divider">
-                    <div></div>
-                    <span class="text-muted">atau</span>
-                    <div></div>
-                </div>
-
-                <a href="{{ route('google.redirect') }}" class="btn btn-outline auth-google-btn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                            fill="#4285F4" />
-                        <path
-                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                            fill="#34A853" />
-                        <path
-                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                            fill="#FBBC05" />
-                        <path
-                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                            fill="#EA4335" />
-                    </svg>
-                    Masuk dengan Google
-                </a>
-
-                <p class="text-muted auth-bottom-text">
-                    Belum punya akun?
-                    <a href="/register" class="text-primary-gradient">Daftar di sini</a>
-                </p>
             </div>
         </div>
     </div>
@@ -101,7 +80,7 @@
             box-shadow: 0 16px 42px rgba(15, 23, 42, .08);
         }
 
-        .auth-login-card {
+        .auth-reset-card {
             max-width: 420px;
         }
 
@@ -205,19 +184,7 @@
             height: 18px !important;
         }
 
-        .auth-forgot-row {
-            text-align: right;
-            margin-top: -2px;
-        }
-
-        .auth-small-link {
-            text-decoration: none;
-            font-size: 12.5px;
-            font-weight: 700;
-        }
-
-        .auth-main-btn,
-        .auth-google-btn {
+        .auth-main-btn {
             width: 100%;
             height: 40px !important;
             min-height: 40px !important;
@@ -226,46 +193,7 @@
             justify-content: center;
             font-size: 14px !important;
             font-weight: 800 !important;
-        }
-
-        .auth-main-btn {
             margin-top: 2px;
-        }
-
-        .auth-google-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-
-        .auth-divider {
-            display: flex;
-            align-items: center;
-            margin: 17px 0;
-        }
-
-        .auth-divider div {
-            flex: 1;
-            height: 1px;
-            background: var(--glass-border, #e5e7eb);
-        }
-
-        .auth-divider span {
-            padding: 0 12px;
-            font-size: 12px;
-        }
-
-        .auth-bottom-text {
-            text-align: center;
-            margin: 17px 0 0;
-            font-size: 13px;
-            line-height: 1.35;
-        }
-
-        .auth-bottom-text a {
-            text-decoration: none;
-            font-weight: 800;
         }
 
         @media (max-height: 720px) {
@@ -297,24 +225,14 @@
             }
 
             .auth-control,
-            .auth-main-btn,
-            .auth-google-btn {
+            .auth-main-btn {
                 height: 37px !important;
                 min-height: 37px !important;
                 line-height: 37px !important;
             }
-
-            .auth-divider {
-                margin: 12px 0;
-            }
-
-            .auth-bottom-text {
-                margin-top: 12px;
-            }
         }
 
         @media (max-width: 576px) {
-
             html,
             body {
                 overflow: auto !important;
@@ -338,17 +256,16 @@
 
 @push('scripts')
     <script>
-        function togglePasswordVisibility() {
-            const passwordInput = document.getElementById('password');
-            const toggleBtn = document.getElementById('toggle-password');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleBtn.innerHTML = '<i data-lucide="eye-off" class="icon"></i>';
-                toggleBtn.title = 'Sembunyikan kata sandi';
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerHTML = '<i data-lucide="eye-off" class="icon"></i>';
+                btn.title = 'Sembunyikan kata sandi';
             } else {
-                passwordInput.type = 'password';
-                toggleBtn.innerHTML = '<i data-lucide="eye" class="icon"></i>';
-                toggleBtn.title = 'Lihat kata sandi';
+                input.type = 'password';
+                btn.innerHTML = '<i data-lucide="eye" class="icon"></i>';
+                btn.title = 'Lihat kata sandi';
             }
             lucide.createIcons();
         }
@@ -358,30 +275,32 @@
                 window.location.href = '/';
             }
 
-            const form = document.getElementById('login-form');
-            const btn = document.getElementById('btn-login');
+            const form = document.getElementById('reset-password-form');
+            const btn = document.getElementById('btn-submit');
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                btn.innerHTML = '<span class="loader" style="width: 16px; height: 16px; border-width: 2px;"></span> &nbsp; Proses...';
+                btn.innerHTML = '<span class="loader" style="width: 16px; height: 16px; border-width: 2px;"></span> &nbsp; Menyimpan...';
                 btn.disabled = true;
 
+                const token = document.getElementById('token').value;
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
+                const password_confirmation = document.getElementById('password_confirmation').value;
 
                 try {
-                    const response = await apiFetch('/auth/login', {
+                    const response = await apiFetch('/auth/reset-password', {
                         method: 'POST',
-                        body: { email, password }
+                        body: { token, email, password, password_confirmation }
                     });
 
-                    showToast('Login berhasil!');
+                    showToast(response.message || 'Password berhasil diubah!');
                     setTimeout(() => {
-                        loginSuccess(response.data.access_token, response.data.user);
-                    }, 1000);
+                        window.location.href = '/login';
+                    }, 1500);
                 } catch (error) {
-                    showToast(error.message, 'error');
-                    btn.innerHTML = 'Masuk';
+                    showToast(error.message || 'Terjadi kesalahan.', 'error');
+                    btn.innerHTML = 'Simpan Kata Sandi';
                     btn.disabled = false;
                 }
             });
