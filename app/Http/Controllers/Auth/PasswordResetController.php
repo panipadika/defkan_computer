@@ -33,22 +33,34 @@ class PasswordResetController extends Controller
             ], 422);
         }
 
-        // Kirim link reset password
-        $status = Password::broker()->sendResetLink(
-            $request->only('email')
-        );
+        try {
+            // Kirim link reset password
+            $status = Password::broker()->sendResetLink(
+                $request->only('email')
+            );
 
-        if ($status === Password::RESET_LINK_SENT) {
+            if ($status === Password::RESET_LINK_SENT) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Link reset password telah dikirim ke email Anda.',
+                ], 200);
+            }
+
             return response()->json([
-                'status' => 'success',
-                'message' => 'Link reset password telah dikirim ke email Anda.',
-            ], 200);
-        }
+                'status' => 'error',
+                'message' => 'Gagal mengirim email reset password. Silakan coba beberapa saat lagi.',
+            ], 400);
+        } catch (\Throwable $e) {
+            // Log detail error
+            \Log::error('SMTP/Mail Error: ' . $e->getMessage(), [
+                'exception' => $e
+            ]);
 
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Gagal mengirim email reset password. Silakan coba beberapa saat lagi.',
-        ], 500);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghubungi server email (SMTP). Silakan periksa konfigurasi mail server Anda di panel Railway: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
