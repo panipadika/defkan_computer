@@ -16,7 +16,11 @@ class GoogleAuthController extends Controller
      */
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->stateless()->redirect();
+        $redirectUrl = env('GOOGLE_REDIRECT_URL') ?: url('/auth/google/callback');
+        return Socialite::driver('google')
+            ->redirectUrl($redirectUrl)
+            ->stateless()
+            ->redirect();
     }
 
     /**
@@ -33,7 +37,11 @@ class GoogleAuthController extends Controller
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->stateless()->user();
+            $redirectUrl = env('GOOGLE_REDIRECT_URL') ?: url('/auth/google/callback');
+            $googleUser = Socialite::driver('google')
+                ->redirectUrl($redirectUrl)
+                ->stateless()
+                ->user();
 
             $pengguna = Pengguna::where('email', $googleUser->getEmail())->first();
 
