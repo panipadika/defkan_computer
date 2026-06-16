@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\Pengguna;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\AbstractProvider;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class GoogleAuthController extends Controller
 {
@@ -14,10 +17,14 @@ class GoogleAuthController extends Controller
      * GET /api/auth/google  atau  GET /auth/google (web)
      * Langsung redirect browser ke halaman login Google.
      */
-    public function redirectToGoogle()
+    public function redirectToGoogle(): RedirectResponse
     {
-        $redirectUrl = env('GOOGLE_REDIRECT_URL') ?: url('/auth/google/callback');
-        return Socialite::driver('google')
+        $redirectUrl = (string) (config('services.google.redirect') ?: url('/auth/google/callback'));
+
+        /** @var AbstractProvider $provider */
+        $provider = Socialite::driver('google');
+
+        return $provider
             ->redirectUrl($redirectUrl)
             ->stateless()
             ->redirect();
@@ -34,11 +41,15 @@ class GoogleAuthController extends Controller
      *  4. Buat API token menggunakan Laravel Sanctum
      *  5. Return token + data pengguna
      */
-    public function handleGoogleCallback()
+    public function handleGoogleCallback(): View|RedirectResponse
     {
         try {
-            $redirectUrl = env('GOOGLE_REDIRECT_URL') ?: url('/auth/google/callback');
-            $googleUser = Socialite::driver('google')
+            $redirectUrl = (string) (config('services.google.redirect') ?: url('/auth/google/callback'));
+
+            /** @var AbstractProvider $provider */
+            $provider = Socialite::driver('google');
+
+            $googleUser = $provider
                 ->redirectUrl($redirectUrl)
                 ->stateless()
                 ->user();
@@ -85,7 +96,7 @@ class GoogleAuthController extends Controller
      * GET /api/me
      * Mendapatkan profil pengguna yang sedang login.
      */
-    public function me(Request $request)
+    public function me(Request $request): JsonResponse
     {
         /** @var \App\Models\Pengguna $pengguna */
         $pengguna = $request->user();
