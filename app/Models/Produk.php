@@ -6,6 +6,25 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * App\Models\Produk
+ *
+ * @property int $id_produk
+ * @property string $nama_produk
+ * @property string|null $deskripsi
+ * @property int $harga
+ * @property int $stok
+ * @property string|null $foto
+ * @property string $kategori
+ * @property string|null $ram
+ * @property string|null $storage
+ * @property string|null $vga
+ * @property string|null $cpu
+ * @property string|null $merek
+ * @property array|null $galeri_foto
+ * @property-read string|null $foto_url
+ * @property-read array $galeri_foto_urls
+ */
 class Produk extends Model
 {
     use HasFactory, SoftDeletes;

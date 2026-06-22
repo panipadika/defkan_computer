@@ -7,6 +7,25 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * App\Models\Pengguna
+ *
+ * @property int $id_pengguna
+ * @property string $nama
+ * @property string $email
+ * @property string|null $password
+ * @property string|null $google_id
+ * @property string $role
+ * @property string|null $no_hp
+ * @property int $pesanan_count
+ * @property int $total_pesanan
+ * @property int $servis_count
+ * @property int $total_servis
+ * @property float $total_belanja_produk
+ * @property float $total_belanja_servis
+ * @property float $total_belanja
+ * @property bool $__is_admin_defkan
+ */
 class Pengguna extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;

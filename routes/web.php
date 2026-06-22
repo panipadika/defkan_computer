@@ -29,16 +29,18 @@ Route::get('/servis', function () { return view('user.servis.index'); });
 Route::get('/servis/track', function () { return view('user.servis.track'); });
 Route::get('/rekomendasi', function () { return view('user.rekomendasi.index'); });
 
-// Admin Views (akses dikontrol oleh frontend JS cek role admin)
-Route::get('/admin', function () { return view('admin.dashboard'); });
-Route::get('/admin/produk', function () { return view('admin.produk'); });
-Route::get('/admin/produk/tambah', function () { return view('admin.produk-form'); });
-Route::get('/admin/produk/edit/{id}', function ($id) { return view('admin.produk-form', compact('id')); });
-Route::get('/admin/pesanan', function () { return view('admin.pesanan'); });
-Route::get('/admin/servis', function () { return view('admin.servis'); });
-Route::get('/admin/chat', function () { return view('admin.chat'); });
-Route::get('/admin/pelanggan', function () { return view('admin.pelanggan'); });
-Route::get('/admin/pendapatan', function () { return view('admin.pendapatan'); });
+// Admin Views — Diproteksi AdminWebGuard (validasi token Sanctum + cek role admin di server)
+Route::middleware('admin.web')->prefix('admin')->group(function () {
+    Route::get('/',         fn ()      => view('admin.dashboard'));
+    Route::get('/produk',   fn ()      => view('admin.produk'));
+    Route::get('/produk/tambah', fn () => view('admin.produk-form'));
+    Route::get('/produk/edit/{id}', fn ($id) => view('admin.produk-form', compact('id')));
+    Route::get('/pesanan',  fn ()      => view('admin.pesanan'));
+    Route::get('/servis',   fn ()      => view('admin.servis'));
+    Route::get('/chat',     fn ()      => view('admin.chat'));
+    Route::get('/pelanggan', fn ()     => view('admin.pelanggan'));
+    Route::get('/pendapatan', fn ()    => view('admin.pendapatan'));
+});
 
 // Google Login (Web redirect flow)
 Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('google.redirect');

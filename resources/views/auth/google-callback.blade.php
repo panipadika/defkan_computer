@@ -24,6 +24,13 @@
     if (data.token && data.user) {
         localStorage.setItem('auth_token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
+        // Simpan ke cookie agar middleware server bisa memvalidasi sesi admin
+        if (typeof setAuthCookie === 'function') {
+            setAuthCookie(data.token);
+        } else {
+            const maxAge = 60 * 60 * 24 * 7;
+            document.cookie = `admin_token=${data.token}; path=/; max-age=${maxAge}; SameSite=Strict`;
+        }
         window.location.href = '/';
     } else {
         showToast('Login Google gagal. Silakan coba lagi.', 'error');

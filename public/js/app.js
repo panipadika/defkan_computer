@@ -62,15 +62,34 @@ async function apiFetch(endpoint, options = {}) {
 // =====================
 // Authentication Helpers
 // =====================
+
+/**
+ * Simpan token ke cookie (agar middleware PHP bisa membacanya
+ * untuk proteksi server-side route /admin/*). SameSite=Strict
+ * mencegah CSRF. Tidak ada HttpOnly agar JS bisa hapus saat logout.
+ */
+function setAuthCookie(token) {
+    const maxAge = 60 * 60 * 24 * 7; // 7 hari (dalam detik)
+    document.cookie = `admin_token=${token}; path=/; max-age=${maxAge}; SameSite=Strict`;
+}
+
+function clearAuthCookie() {
+    document.cookie = 'admin_token=; path=/; max-age=0; SameSite=Strict';
+}
+
 function loginSuccess(token, user) {
     localStorage.setItem('auth_token', token);
     localStorage.setItem('user', JSON.stringify(user));
+    // Simpan juga ke cookie agar middleware server bisa memvalidasi sesi admin
+    setAuthCookie(token);
     window.location.href = '/';
 }
 
 function logout(redirect = true) {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user');
+    // Hapus cookie sesi admin
+    clearAuthCookie();
     if (redirect) {
         window.location.href = '/login';
     }

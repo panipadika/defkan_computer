@@ -30,6 +30,7 @@ class PasswordResetTest extends TestCase
     {
         Notification::fake();
 
+        /** @var \App\Models\Pengguna $user */
         $user = Pengguna::create([
             'nama' => 'Test User',
             'email' => 'test@example.com',
@@ -65,6 +66,7 @@ class PasswordResetTest extends TestCase
 
     public function test_reset_password_fails_for_invalid_token()
     {
+        /** @var \App\Models\Pengguna $user */
         $user = Pengguna::create([
             'nama' => 'Test User',
             'email' => 'test@example.com',
@@ -88,6 +90,7 @@ class PasswordResetTest extends TestCase
 
     public function test_reset_password_updates_password_successfully()
     {
+        /** @var \App\Models\Pengguna $user */
         $user = Pengguna::create([
             'nama' => 'Test User',
             'email' => 'test@example.com',
@@ -95,7 +98,9 @@ class PasswordResetTest extends TestCase
             'role' => Pengguna::ROLE_USER,
         ]);
 
-        $token = Password::broker()->createToken($user);
+        /** @var \Illuminate\Auth\Passwords\PasswordBroker $broker */
+        $broker = Password::broker();
+        $token = $broker->createToken($user);
 
         $response = $this->postJson('/api/auth/reset-password', [
             'token' => $token,

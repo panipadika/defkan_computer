@@ -15,12 +15,18 @@ use App\Http\Controllers\User\RekomendasiLaptopController;
 use App\Http\Controllers\Shared\EkspedisiController;
 use App\Http\Controllers\Shared\SoftwareController;
 
-Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle']);
-Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
-Route::post('/auth/register', [AuthController::class, 'register']);
-Route::post('/auth/login', [AuthController::class, 'login']);
-Route::post('/auth/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail']);
-Route::post('/auth/reset-password', [PasswordResetController::class, 'reset']);
+// Endpoint auth dengan rate limiting ketat untuk mencegah brute force & spam
+Route::post('/auth/register', [AuthController::class, 'register'])
+    ->middleware('throttle:10,1');                                   // maks 10x per menit per IP
+
+Route::post('/auth/login', [AuthController::class, 'login'])
+    ->middleware('throttle:login');                                  // maks 5x per menit per IP
+
+Route::post('/auth/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])
+    ->middleware('throttle:forgot-password');                        // maks 3x per 10 menit per IP
+
+Route::post('/auth/reset-password', [PasswordResetController::class, 'reset'])
+    ->middleware('throttle:5,10');                                   // maks 5x per 10 menit per IP
 
 Route::get('/produk/export', [ProdukController::class, 'export'])->middleware(['auth:sanctum', 'admin']);
 Route::get('/produk', [ProdukController::class, 'index']);
