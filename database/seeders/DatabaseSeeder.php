@@ -99,6 +99,32 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
+        // Create a completed order without reviews/complaints for testing the forms
+        $testOrderNoReview = \App\Models\Pesanan::where('id_pengguna', $user->id_pengguna)
+            ->where('status', 'selesai')
+            ->skip(1)
+            ->first();
+        if (!$testOrderNoReview && $product2) {
+            $testOrderNoReview = \App\Models\Pesanan::create([
+                'id_pengguna' => $user->id_pengguna,
+                'total_harga' => $product2->harga,
+                'status' => 'selesai',
+                'alamat_pengiriman' => 'Jl. Pengujian No. 123, Kota Defkan',
+                'metode_pembayaran' => 'Transfer Bank',
+                'bukti_pembayaran' => 'bukti_test.jpg',
+                'waktu_pembayaran' => now(),
+            ]);
+
+            DB::table('detail_pesanan')->insert([
+                'id_pesanan' => $testOrderNoReview->id_pesanan,
+                'id_produk' => $product2->id_produk,
+                'jumlah' => 1,
+                'harga' => $product2->harga,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
         // 3. Create a completed service
         $servis = \App\Models\Servis::where('pengguna_id', $user->id_pengguna)->first();
         if (!$servis) {
@@ -115,6 +141,30 @@ class DatabaseSeeder extends Seeder
                 'status' => 'diambil',
                 'tanggal_masuk' => now()->subDays(5),
                 'metode_pembayaran' => 'Virtual Account',
+                'status_pembayaran' => 'lunas',
+                'waktu_pembayaran' => now()->subDays(1),
+            ]);
+        }
+
+        // Create a completed service without reviews/complaints for testing the forms
+        $testServisNoReview = \App\Models\Servis::where('pengguna_id', $user->id_pengguna)
+            ->where('status', 'diambil')
+            ->skip(1)
+            ->first();
+        if (!$testServisNoReview) {
+            $testServisNoReview = \App\Models\Servis::create([
+                'pengguna_id' => $user->id_pengguna,
+                'kode_servis' => 'SRV-TESTFORM',
+                'merek_laptop' => 'Lenovo',
+                'nama_perangkat' => 'ThinkPad X1 Carbon',
+                'jenis_kerusakan' => 'Keyboard Rusak',
+                'deskripsi' => 'Beberapa tombol keyboard tidak bisa ditekan.',
+                'keterangan' => 'Ganti keyboard original selesai.',
+                'estimasi_biaya' => 350000,
+                'total_biaya' => 350000,
+                'status' => 'diambil',
+                'tanggal_masuk' => now()->subDays(3),
+                'metode_pembayaran' => 'Cash',
                 'status_pembayaran' => 'lunas',
                 'waktu_pembayaran' => now()->subDays(1),
             ]);

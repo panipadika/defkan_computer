@@ -888,7 +888,8 @@
             if (title) title.textContent = 'Detail Servis';
 
             let serviceReviewHtml = '';
-            if (service.status === 'diambil' || service.status === 'selesai') {
+            const sStatus = String(service.status || '').toLowerCase();
+            if (sStatus === 'diambil' || sStatus === 'selesai') {
                 if (service.ulasan) {
                     const stars = Array.from({length: 5}, (_, i) => 
                         `<span style="color:${i < service.ulasan.rating ? '#F59E0B' : '#64748b'}; font-size:20px;">★</span>`
@@ -913,7 +914,7 @@
             }
 
             let serviceComplaintHtml = '';
-            if (service.status === 'diambil' || service.status === 'selesai') {
+            if (sStatus === 'diambil' || sStatus === 'selesai') {
                 if (service.complaint) {
                     const statusColors = {
                         menunggu: { bg: 'rgba(245,158,11,0.15)', color: '#f59e0b', label: 'Menunggu Respon' },
@@ -1118,7 +1119,7 @@
                         </div>
                         <div class="gap-8">
                             <span class="btn btn-outline" style="padding: 6px 14px; font-size: 13px;">
-                                ${order.status === 'pending' ? 'Detail & Pembayaran' : 'Detail'} <i data-lucide="arrow-right" class="icon icon-sm"></i>
+                                ${String(order.status || '').toLowerCase() === 'pending' ? 'Detail & Pembayaran' : 'Detail'} <i data-lucide="arrow-right" class="icon icon-sm"></i>
                             </span>
                         </div>
                     </div>
@@ -1148,7 +1149,8 @@
                     const isReviewed = ulasanList.some(r => Number(r.id_produk) === Number(p.id_produk));
                     
                     let reviewBtn = '';
-                    if (order.status === 'selesai') {
+                    const oStatus = String(order.status || '').toLowerCase();
+                    if (oStatus === 'selesai') {
                         if (isReviewed) {
                             reviewBtn = `<span class="status-badge status-selesai" style="font-size: 11px; padding: 4px 10px; margin-top: 6px; display: inline-block;">★ Sudah Direview</span>`;
                         } else {
@@ -1177,7 +1179,7 @@
                 }).join('');
 
                 let complaintHtml = '';
-                if (order.status === 'selesai') {
+                if (oStatus === 'selesai') {
                     if (order.complaint) {
                         const statusColors = {
                             menunggu: { bg: 'rgba(245,158,11,0.15)', color: '#f59e0b', label: 'Menunggu Respon' },
