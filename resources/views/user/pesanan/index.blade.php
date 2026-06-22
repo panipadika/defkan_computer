@@ -171,6 +171,94 @@
                             onclick="closeUploadModal()">Batal</button>
                     </div>
                 </form>
+        </div>
+
+        {{-- Review Modal --}}
+        <div id="review-modal" class="modal-overlay" style="display: none;">
+            <div class="glass-panel modal-panel" style="max-width: 480px;">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i data-lucide="star" class="icon text-primary"></i>
+                        <span>Beri Ulasan</span>
+                    </h2>
+                    <button onclick="closeReviewModal()" class="modal-close-btn" aria-label="Tutup">
+                        <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                    </button>
+                </div>
+                <form id="review-form" onsubmit="handleReviewSubmit(event)">
+                    <input type="hidden" id="review-tipe">
+                    <input type="hidden" id="review-pesanan-id">
+                    <input type="hidden" id="review-produk-id">
+                    <input type="hidden" id="review-servis-id">
+
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h4 id="review-item-name" style="font-size: 15px; font-weight: 600; margin-bottom: 12px; color: var(--text-main);">Nama Produk/Servis</h4>
+                        <div class="rating-stars-input" style="display: flex; justify-content: center; gap: 8px;">
+                            <span class="star-btn" data-value="1" onclick="setRatingValue(1)">★</span>
+                            <span class="star-btn" data-value="2" onclick="setRatingValue(2)">★</span>
+                            <span class="star-btn" data-value="3" onclick="setRatingValue(3)">★</span>
+                            <span class="star-btn" data-value="4" onclick="setRatingValue(4)">★</span>
+                            <span class="star-btn" data-value="5" onclick="setRatingValue(5)">★</span>
+                        </div>
+                        <input type="hidden" id="review-rating-val" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Komentar / Ulasan</label>
+                        <textarea id="review-komentar" class="form-control" rows="4" placeholder="Bagikan pengalaman Anda..." style="padding: 10px; background: rgba(0, 0, 0, 0.2); color: var(--text-main); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); width: 100%;" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Foto Bukti (Maksimal 3)</label>
+                        <input type="file" id="review-foto" class="form-control" accept="image/*" multiple style="padding: 10px;">
+                    </div>
+
+                    <div style="display: flex; gap: 12px; margin-top: 20px;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;" id="btn-submit-review">Kirim Ulasan</button>
+                        <button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeReviewModal()">Batal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {{-- Complaint Modal --}}
+        <div id="complaint-modal" class="modal-overlay" style="display: none;">
+            <div class="glass-panel modal-panel" style="max-width: 520px;">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i data-lucide="alert-circle" class="icon text-primary"></i>
+                        <span>Laporkan Masalah (Komplain)</span>
+                    </h2>
+                    <button onclick="closeComplaintModal()" class="modal-close-btn" aria-label="Tutup">
+                        <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                    </button>
+                </div>
+                <form id="complaint-form" onsubmit="handleComplaintSubmit(event)">
+                    <input type="hidden" id="complaint-tipe">
+                    <input type="hidden" id="complaint-ref-id">
+
+                    <h4 id="complaint-ref-title" style="font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 16px;">Pesanan #123</h4>
+
+                    <div class="form-group">
+                        <label class="form-label">Judul Masalah / Komplain</label>
+                        <input type="text" id="complaint-judul" class="form-control" required placeholder="Contoh: Barang Rusak saat Diterima, dll" style="padding: 10px; background: rgba(0, 0, 0, 0.2); color: var(--text-main); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); width: 100%;">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Deskripsi Masalah secara Detail</label>
+                        <textarea id="complaint-deskripsi" class="form-control" rows="5" required placeholder="Jelaskan kendala yang Anda hadapi agar kami bisa memberikan solusi terbaik..." style="padding: 10px; background: rgba(0, 0, 0, 0.2); color: var(--text-main); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); width: 100%;"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Foto Bukti Pendukung (Maksimal 3)</label>
+                        <input type="file" id="complaint-foto" class="form-control" accept="image/*" multiple style="padding: 10px;">
+                    </div>
+
+                    <div style="display: flex; gap: 12px; margin-top: 20px;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;" id="btn-submit-complaint">Kirim Laporan</button>
+                        <button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeComplaintModal()">Batal</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -179,12 +267,25 @@
 @push('styles')
     <style>
         #detail-modal .modal-panel,
-        #upload-modal .modal-panel {
+        #upload-modal .modal-panel,
+        #review-modal .modal-panel,
+        #complaint-modal .modal-panel {
             max-height: 90vh;
             display: flex;
             flex-direction: column;
             padding: 24px;
             position: relative;
+        }
+
+        .star-btn {
+            font-size: 36px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: color 0.15s, transform 0.15s;
+            user-select: none;
+        }
+        .star-btn:hover {
+            transform: scale(1.25);
         }
 
         #detail-modal .modal-panel {
@@ -786,6 +887,70 @@
 
             if (title) title.textContent = 'Detail Servis';
 
+            let serviceReviewHtml = '';
+            if (service.status === 'diambil' || service.status === 'selesai') {
+                if (service.ulasan) {
+                    const stars = Array.from({length: 5}, (_, i) => 
+                        `<span style="color:${i < service.ulasan.rating ? '#F59E0B' : '#64748b'}; font-size:20px;">★</span>`
+                    ).join('');
+                    serviceReviewHtml = `
+                        <div class="glass" style="padding: 16px; border-radius: 12px; margin-top: 16px; background: rgba(255,255,255,0.01);">
+                            <div class="service-info-label" style="margin-bottom: 6px;">Ulasan Anda</div>
+                            <div style="display:flex; gap:2px; margin-bottom: 8px;">${stars}</div>
+                            <p style="font-size: 13px; line-height: 1.5; margin: 0; color: var(--text-main);">${escapeHtml(service.ulasan.komentar || 'Tidak ada komentar.')}</p>
+                        </div>
+                    `;
+                } else {
+                    serviceReviewHtml = `
+                        <div style="margin-top: 16px;">
+                            <button type="button" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 13px;"
+                                onclick="closeDetailModal(); openReviewModal('servis', null, null, ${service.id}, 'Servis Laptop: ${escapeAttr(service.merek_laptop)}')">
+                                ⭐ Beri Ulasan Servis
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+
+            let serviceComplaintHtml = '';
+            if (service.status === 'diambil' || service.status === 'selesai') {
+                if (service.complaint) {
+                    const statusColors = {
+                        menunggu: { bg: 'rgba(245,158,11,0.15)', color: '#f59e0b', label: 'Menunggu Respon' },
+                        diproses: { bg: 'rgba(59,130,246,0.15)', color: '#3b82f6', label: 'Sedang Diproses' },
+                        selesai:  { bg: 'rgba(16, 185, 129, 0.15)', color: '#10b981', label: 'Komplain Selesai' },
+                        ditolak:  { bg: 'rgba(239, 68, 68, 0.15)', color: '#ef4444', label: 'Komplain Ditolak' },
+                    };
+                    const c = service.complaint;
+                    const sc = statusColors[c.status] || { bg: '#eee', color: '#555', label: c.status };
+                    serviceComplaintHtml = `
+                        <div class="glass" style="padding: 16px; border-radius: 12px; margin-top: 16px; border-left: 4px solid ${sc.color}; background: rgba(255,255,255,0.01);">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <div style="font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase;">Status Komplain</div>
+                                <span class="status-badge" style="background:${sc.bg}; color:${sc.color}; font-size:11px; padding:3px 8px; border-radius:6px; font-weight:600;">${sc.label}</span>
+                            </div>
+                            <p style="font-size: 14px; font-weight: 600; margin: 0 0 4px; color: var(--text-main);">${escapeHtml(c.judul)}</p>
+                            <p class="text-muted" style="font-size: 13px; margin: 0 0 10px;">${escapeHtml(c.deskripsi)}</p>
+                            ${c.respons_admin ? `
+                                <div style="margin-top:10px; padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid var(--glass-border);">
+                                    <div style="font-size:11px; font-weight:600; color:${sc.color}; margin-bottom:4px;">Tanggapan Admin:</div>
+                                    <div style="font-size:13px; color: var(--text-main);">${escapeHtml(c.respons_admin)}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                } else {
+                    serviceComplaintHtml = `
+                        <div style="margin-top:12px;">
+                            <button type="button" class="btn btn-outline" style="width: 100%; padding: 12px; font-size: 13px; border-color: #D97706; color: #D97706; background: transparent;" 
+                                onclick="closeDetailModal(); openComplaintModal('servis', ${service.id}, 'Servis ${escapeAttr(service.kode_servis)}')">
+                                <i data-lucide="alert-circle" class="icon icon-sm" style="color:#D97706; margin-right:6px;"></i> Laporkan Masalah / Komplain
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+
             content.innerHTML = `
                 <div class="detail-section">
                     <h3 style="margin:0 0 14px;">Detail Servis ${escapeHtml(service.kode_servis || '')}</h3>
@@ -858,6 +1023,9 @@
                         <div class="service-info-label">Catatan Teknisi / Admin</div>
                         <p>${service.keterangan ? escapeHtml(service.keterangan) : '<span class="text-muted">Belum ada catatan.</span>'}</p>
                     </div>
+
+                    ${serviceReviewHtml}
+                    ${serviceComplaintHtml}
 
                     <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:18px;">
                         <a class="btn btn-outline" href="/servis/track?code=${encodeURIComponent(service.kode_servis || '')}">Lacak Status</a>
@@ -976,17 +1144,76 @@
 
                 let productsHtml = details.map(d => {
                     const p = d.produk || {};
+                    const ulasanList = order.ulasan || [];
+                    const isReviewed = ulasanList.some(r => Number(r.id_produk) === Number(p.id_produk));
+                    
+                    let reviewBtn = '';
+                    if (order.status === 'selesai') {
+                        if (isReviewed) {
+                            reviewBtn = `<span class="status-badge status-selesai" style="font-size: 11px; padding: 4px 10px; margin-top: 6px; display: inline-block;">★ Sudah Direview</span>`;
+                        } else {
+                            reviewBtn = `
+                                <button type="button" class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; border-radius: 6px; margin-top: 6px;" 
+                                    onclick="event.stopPropagation(); closeDetailModal(); openReviewModal('produk', ${order.id_pesanan}, ${p.id_produk}, null, '${escapeAttr(p.nama_produk)}')">
+                                    Beri Review
+                                </button>
+                            `;
+                        }
+                    }
+
                     return `
-                        <div class="order-product-row">
-                            <img src="${p.foto_url || '/img/placeholder.png'}" alt="" class="order-product-img" loading="lazy">
-                            <div style="flex: 1; min-width: 0;">
-                                <div style="font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.nama_produk || 'Produk'}</div>
-                                <div class="text-muted" style="font-size: 12px;">${d.jumlah}x @ ${formatRupiah(d.harga)}</div>
+                        <div class="order-product-row" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 10px;">
+                            <div style="display: flex; gap: 12px; align-items: center; flex: 1;">
+                                <img src="${p.foto_url || '/img/placeholder.png'}" alt="" class="order-product-img" loading="lazy" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;">
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.nama_produk || 'Produk'}</div>
+                                    <div class="text-muted" style="font-size: 12px;">${d.jumlah}x @ ${formatRupiah(d.harga)}</div>
+                                    ${reviewBtn}
+                                </div>
                             </div>
-                            <div style="font-weight: 600; font-size: 14px;">${formatRupiah(d.harga * d.jumlah)}</div>
+                            <div style="font-weight: 600; font-size: 14px; text-align: right;">${formatRupiah(d.harga * d.jumlah)}</div>
                         </div>
                     `;
                 }).join('');
+
+                let complaintHtml = '';
+                if (order.status === 'selesai') {
+                    if (order.complaint) {
+                        const statusColors = {
+                            menunggu: { bg: 'rgba(245,158,11,0.15)', color: '#f59e0b', label: 'Menunggu Respon' },
+                            diproses: { bg: 'rgba(59,130,246,0.15)', color: '#3b82f6', label: 'Sedang Diproses' },
+                            selesai:  { bg: 'rgba(16, 185, 129, 0.15)', color: '#10b981', label: 'Komplain Selesai' },
+                            ditolak:  { bg: 'rgba(239, 68, 68, 0.15)', color: '#ef4444', label: 'Komplain Ditolak' },
+                        };
+                        const c = order.complaint;
+                        const sc = statusColors[c.status] || { bg: '#eee', color: '#555', label: c.status };
+                        complaintHtml = `
+                            <div class="glass" style="padding: 16px; border-radius: 12px; margin-top: 16px; border-left: 4px solid ${sc.color}; background: rgba(255,255,255,0.01);">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                    <div style="font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase;">Status Komplain</div>
+                                    <span class="status-badge" style="background:${sc.bg}; color:${sc.color}; font-size:11px; padding:3px 8px; border-radius:6px; font-weight:600;">${sc.label}</span>
+                                </div>
+                                <p style="font-size: 14px; font-weight: 600; margin: 0 0 4px; color: var(--text-main);">${escapeHtml(c.judul)}</p>
+                                <p class="text-muted" style="font-size: 13px; margin: 0 0 10px;">${escapeHtml(c.deskripsi)}</p>
+                                ${c.respons_admin ? `
+                                    <div style="margin-top:10px; padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid var(--glass-border);">
+                                        <div style="font-size:11px; font-weight:600; color:${sc.color}; margin-bottom:4px;">Tanggapan Admin:</div>
+                                        <div style="font-size:13px; color: var(--text-main);">${escapeHtml(c.respons_admin)}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    } else {
+                        complaintHtml = `
+                            <div style="margin-top:16px;">
+                                <button type="button" class="btn btn-outline" style="width: 100%; padding: 12px; font-size: 13px; border-color: #D97706; color: #D97706; background: transparent;" 
+                                    onclick="closeDetailModal(); openComplaintModal('pesanan', ${order.id_pesanan}, 'Pesanan #${order.id_pesanan}')">
+                                    <i data-lucide="alert-circle" class="icon icon-sm" style="color: #D97706; margin-right: 6px;"></i> Laporkan Masalah / Komplain
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
 
                 content.innerHTML = `
                     <div class="order-detail-header">
@@ -1032,6 +1259,8 @@
                         <span class="order-detail-total-lbl">Total Pembayaran</span>
                         <span class="order-detail-total-val">${formatRupiah(order.total_harga)}</span>
                     </div>
+
+                    ${complaintHtml}
 
                     ${order.status === 'pending' ? `
                     <div class="glass payment-instructions-container">
@@ -1174,6 +1403,160 @@
                 btn.innerHTML = originalText || 'Kirim Bukti';
                 btn.disabled = false;
                 if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        let selectedRating = 0;
+
+        function setRatingValue(value) {
+            selectedRating = value;
+            document.getElementById('review-rating-val').value = value;
+            document.querySelectorAll('.star-btn').forEach(btn => {
+                const val = parseInt(btn.getAttribute('data-value'));
+                if (val <= value) {
+                    btn.style.color = '#F59E0B'; // Gold color
+                } else {
+                    btn.style.color = 'var(--text-muted)';
+                }
+            });
+        }
+
+        function openReviewModal(tipe, pesananId, produkId, servisId, itemName) {
+            document.getElementById('review-tipe').value = tipe;
+            document.getElementById('review-pesanan-id').value = pesananId || '';
+            document.getElementById('review-produk-id').value = produkId || '';
+            document.getElementById('review-servis-id').value = servisId || '';
+            document.getElementById('review-item-name').textContent = itemName;
+            setRatingValue(0);
+            document.getElementById('review-komentar').value = '';
+            document.getElementById('review-foto').value = '';
+            
+            document.getElementById('review-modal').style.display = 'flex';
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeReviewModal() {
+            document.getElementById('review-modal').style.display = 'none';
+        }
+
+        async function handleReviewSubmit(e) {
+            e.preventDefault();
+            const tipe = document.getElementById('review-tipe').value;
+            const pesananId = document.getElementById('review-pesanan-id').value;
+            const produkId = document.getElementById('review-produk-id').value;
+            const servisId = document.getElementById('review-servis-id').value;
+            const rating = document.getElementById('review-rating-val').value;
+            const komentar = document.getElementById('review-komentar').value;
+            const files = document.getElementById('review-foto').files;
+            const btn = document.getElementById('btn-submit-review');
+
+            if (!rating || rating === '0') {
+                showToast('Pilih rating bintang terlebih dahulu', 'error');
+                return;
+            }
+
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<div class="loader" style="width:18px;height:18px;border-width:2px;"></div> Mengirim...';
+            btn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('tipe', tipe);
+                formData.append('rating', rating);
+                formData.append('komentar', komentar);
+                if (pesananId) formData.append('id_pesanan', pesananId);
+                if (produkId) formData.append('id_produk', produkId);
+                if (servisId) formData.append('id_servis', servisId);
+                
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('foto_bukti[]', files[i]);
+                }
+
+                const res = await apiFetch('/ulasan', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                showToast('Ulasan Anda berhasil dikirim!');
+                closeReviewModal();
+                
+                // Refresh data
+                if (tipe === 'servis') {
+                    await loadServices();
+                } else {
+                    await loadOrders();
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function openComplaintModal(tipe, refId, refTitle) {
+            document.getElementById('complaint-tipe').value = tipe;
+            document.getElementById('complaint-ref-id').value = refId;
+            document.getElementById('complaint-ref-title').textContent = refTitle;
+            document.getElementById('complaint-judul').value = '';
+            document.getElementById('complaint-deskripsi').value = '';
+            document.getElementById('complaint-foto').value = '';
+
+            document.getElementById('complaint-modal').style.display = 'flex';
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeComplaintModal() {
+            document.getElementById('complaint-modal').style.display = 'none';
+        }
+
+        async function handleComplaintSubmit(e) {
+            e.preventDefault();
+            const tipe = document.getElementById('complaint-tipe').value;
+            const refId = document.getElementById('complaint-ref-id').value;
+            const judul = document.getElementById('complaint-judul').value;
+            const deskripsi = document.getElementById('complaint-deskripsi').value;
+            const files = document.getElementById('complaint-foto').files;
+            const btn = document.getElementById('btn-submit-complaint');
+
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<div class="loader" style="width:18px;height:18px;border-width:2px;"></div> Mengirim...';
+            btn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('tipe', tipe);
+                formData.append('judul', judul);
+                formData.append('deskripsi', deskripsi);
+                if (tipe === 'pesanan') {
+                    formData.append('id_pesanan', refId);
+                } else {
+                    formData.append('id_servis', refId);
+                }
+
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('foto_bukti[]', files[i]);
+                }
+
+                const res = await apiFetch('/complaint', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                showToast('Laporan komplain berhasil diajukan!');
+                closeComplaintModal();
+
+                // Refresh data
+                if (tipe === 'servis') {
+                    await loadServices();
+                } else {
+                    await loadOrders();
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
         }
 

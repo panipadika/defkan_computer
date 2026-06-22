@@ -354,7 +354,7 @@ class ServisController extends Controller
             ], 401);
         }
 
-        $servis = Servis::with('pengguna')
+        $servis = Servis::with(['pengguna', 'complaint', 'ulasan'])
             ->where('pengguna_id', $pengguna->id_pengguna)
             ->orderBy('created_at', 'desc')
             ->get()

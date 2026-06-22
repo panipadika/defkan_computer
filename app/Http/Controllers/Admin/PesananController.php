@@ -80,7 +80,7 @@ class PesananController extends Controller
         /** @var \App\Models\Pengguna $pengguna */
         $pengguna = $request->user();
 
-        $pesanan = Pesanan::with(['detail.produk', 'ekspedisi'])->find($id);
+        $pesanan = Pesanan::with(['detail.produk', 'ekspedisi', 'complaint', 'ulasan'])->find($id);
 
         if (!$pesanan) {
             return response()->json([
@@ -282,7 +282,7 @@ class PesananController extends Controller
         /** @var \App\Models\Pengguna $pengguna */
         $pengguna = $request->user();
 
-        $pesanan = Pesanan::with(['detail.produk', 'ekspedisi'])
+        $pesanan = Pesanan::with(['detail.produk', 'ekspedisi', 'complaint', 'ulasan'])
             ->where('id_pengguna', $pengguna->id_pengguna)
             ->orderBy('created_at', 'desc')
             ->paginate(10);

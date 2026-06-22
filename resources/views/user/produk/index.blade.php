@@ -1891,6 +1891,94 @@
                                     </div>
                                 ` : '';
 
+                // Fetch reviews
+                let reviewsHtml = '';
+                try {
+                    const revRes = await apiFetch(`/produk/${idProduk}/ulasan`);
+                    const revData = revRes.data.data || [];
+                    const avgRating = revRes.meta?.rata_rating || 0;
+                    
+                    if (revData.length > 0) {
+                        const starsAvg = Array.from({length: 5}, (_, i) => 
+                            `<span style="color:${i < Math.round(avgRating) ? '#F59E0B' : '#64748b'}; font-size:16px;">★</span>`
+                        ).join('');
+
+                        const listHtml = revData.map(r => {
+                            const stars = Array.from({length: 5}, (_, i) => 
+                                `<span style="color:${i < r.rating ? '#F59E0B' : '#64748b'}; font-size:12px;">★</span>`
+                            ).join('');
+                            const formattedDate = new Date(r.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                            
+                            // Render review photos if any
+                            let reviewPhotosHtml = '';
+                            if (Array.isArray(r.foto_bukti_urls) && r.foto_bukti_urls.length > 0) {
+                                reviewPhotosHtml = `
+                                    <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+                                        ${r.foto_bukti_urls.map(img => `
+                                            <a href="${img}" target="_blank">
+                                                <img src="${img}" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:1px solid var(--glass-border);">
+                                            </a>
+                                        `).join('')}
+                                    </div>
+                                `;
+                            } else if (r.foto_bukti) {
+                                const photos = Array.isArray(r.foto_bukti) ? r.foto_bukti : (typeof r.foto_bukti === 'string' ? JSON.parse(r.foto_bukti) : []);
+                                if (photos.length > 0) {
+                                    reviewPhotosHtml = `
+                                        <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+                                            ${photos.map(img => {
+                                                const url = img.startsWith('http') ? img : `/storage/${img}`;
+                                                return `
+                                                    <a href="${url}" target="_blank">
+                                                        <img src="${url}" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:1px solid var(--glass-border);">
+                                                    </a>
+                                                `;
+                                            }).join('')}
+                                        </div>
+                                    `;
+                                }
+                            }
+
+                            return `
+                                <div style="border-bottom: 1px solid var(--glass-border); padding: 12px 0;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                        <div style="font-weight:600; font-size:13px; color:var(--text-main);">${escapeHtml(r.pengguna?.nama || 'Anonim')}</div>
+                                        <div style="font-size:11px; color:var(--text-muted);">${formattedDate}</div>
+                                    </div>
+                                    <div style="display:flex; gap:2px; margin-bottom:6px;">${stars}</div>
+                                    <p style="font-size:12.5px; margin:0; line-height:1.5; color:var(--text-main);">${escapeHtml(r.komentar || '-')}</p>
+                                    ${reviewPhotosHtml}
+                                </div>
+                            `;
+                        }).join('');
+
+                        reviewsHtml = `
+                            <div style="background: var(--bg-surface-alt); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); padding: 18px; margin-top: 16px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:10px; margin-bottom:12px;">
+                                    <h4 style="font-size: 14px; font-weight: 700; margin:0; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+                                        <i data-lucide="star" class="icon icon-sm text-primary" style="fill:#F59E0B; stroke:#F59E0B;"></i> Ulasan Pembeli
+                                    </h4>
+                                    <div style="display:flex; align-items:center; gap:6px;">
+                                        <span style="font-weight:700; font-size:14px; color:var(--text-main);">${avgRating} / 5</span>
+                                        <div style="display:flex; gap:1px;">${starsAvg}</div>
+                                    </div>
+                                </div>
+                                <div style="max-height: 250px; overflow-y: auto; padding-right: 6px;">
+                                    ${listHtml}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        reviewsHtml = `
+                            <div style="background: var(--bg-surface-alt); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); padding: 18px; margin-top: 16px; text-align:center;">
+                                <p class="text-muted" style="font-size:13px; margin:0;">Belum ada ulasan untuk produk ini.</p>
+                            </div>
+                        `;
+                    }
+                } catch (revErr) {
+                    console.error("Gagal memuat ulasan produk:", revErr);
+                }
+
                 content.innerHTML = `
                                 <div class="product-detail-grid">
                                     <div>
@@ -1951,6 +2039,8 @@
                                     <p style="font-size: 13px; color: var(--text-muted); line-height: 1.75; white-space: pre-line;">${escapeHtml(produk.deskripsi)}</p>
                                 </div>
                                 ` : ''}
+
+                                ${reviewsHtml}
                             `;
                 lucide.createIcons();
             } catch (err) {

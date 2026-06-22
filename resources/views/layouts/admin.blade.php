@@ -224,6 +224,13 @@
                 <a href="/admin/pendapatan" class="admin-menu-link @yield('tab-pendapatan')">
                     <i data-lucide="trending-up" class="icon icon-sm menu-icon"></i> Pendapatan
                 </a>
+                <a href="/admin/ulasan" class="admin-menu-link @yield('tab-ulasan')">
+                    <i data-lucide="star" class="icon icon-sm menu-icon"></i> Kelola Ulasan
+                </a>
+                <a href="/admin/complaint" class="admin-menu-link @yield('tab-complaint')">
+                    <i data-lucide="alert-triangle" class="icon icon-sm menu-icon"></i> Komplain Pelanggan
+                    <span class="sidebar-badge badge-warning" id="badge-complaint" style="display: none;">0</span>
+                </a>
 
                 <div class="sidebar-divider" style="margin-top: auto;"></div>
 
@@ -293,6 +300,7 @@
                     updateSidebarBadge('badge-pesanan', d.pesanan_baru);
                     updateSidebarBadge('badge-servis', d.servis_baru);
                     updateSidebarBadge('badge-chat', d.chat_unread);
+                    updateSidebarBadge('badge-complaint', d.complaint_menunggu);
                 }
             } catch (err) {
                 console.warn('Gagal memuat sidebar counts:', err);
