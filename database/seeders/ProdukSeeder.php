@@ -9,10 +9,11 @@ class ProdukSeeder extends Seeder
 {
     public function run(): void
     {
-        // Truncate first to make sure old dirty data is cleaned up
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('produk')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        // Hanya seed jika tabel produk masih kosong (agar tidak menimpa data produk production)
+        if (DB::table('produk')->count() > 0) {
+            $this->command->warn("⚠️  Tabel produk sudah berisi data, skip ProdukSeeder.");
+            return;
+        }
 
         $produkList = [
             // Ultrabooks

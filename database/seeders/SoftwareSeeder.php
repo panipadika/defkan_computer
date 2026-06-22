@@ -9,11 +9,11 @@ class SoftwareSeeder extends Seeder
 {
     public function run(): void
     {
-        // Truncate first to make sure old dirty data is cleaned up
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('requirement_software')->truncate();
-        DB::table('software')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        // Hanya seed jika tabel software masih kosong (agar tidak menimpa data production)
+        if (DB::table('software')->count() > 0) {
+            $this->command->warn("⚠️  Tabel software sudah berisi data, skip SoftwareSeeder.");
+            return;
+        }
 
         $softwareList = [
             // === GAMING ===
