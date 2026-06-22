@@ -124,7 +124,8 @@ class DatabaseSeeder extends Seeder
         if (\App\Models\Ulasan::count() === 0) {
             // Review for Product 1 (from our order)
             \App\Models\Ulasan::create([
-                'id_pengguna' => $user->id_pengguna,
+                'pengguna_id' => $user->id_pengguna,
+                'tipe' => 'produk',
                 'id_pesanan' => $pesanan->id_pesanan,
                 'id_produk' => $product1->id_produk,
                 'rating' => 5,
@@ -159,7 +160,8 @@ class DatabaseSeeder extends Seeder
                 ]);
 
                 \App\Models\Ulasan::create([
-                    'id_pengguna' => $anotherUser->id_pengguna,
+                    'pengguna_id' => $anotherUser->id_pengguna,
+                    'tipe' => 'produk',
                     'id_pesanan' => $sitiPesanan->id_pesanan,
                     'id_produk' => $product3->id_produk,
                     'rating' => 4,
@@ -172,7 +174,7 @@ class DatabaseSeeder extends Seeder
         // 5. Create some default complaints
         if (\App\Models\Complaint::count() === 0) {
             \App\Models\Complaint::create([
-                'id_pengguna' => $user->id_pengguna,
+                'pengguna_id' => $user->id_pengguna,
                 'tipe' => 'pesanan',
                 'id_referensi' => $pesanan->id_pesanan,
                 'judul' => 'Charger laptop tidak berfungsi',
@@ -180,5 +182,6 @@ class DatabaseSeeder extends Seeder
                 'status' => 'menunggu',
             ]);
         }
+        $this->command->info("✅ Mock data (ulasan & complaint) berhasil ditambahkan.");
     }
 }
