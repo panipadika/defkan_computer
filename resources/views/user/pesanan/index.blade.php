@@ -910,7 +910,7 @@
                     serviceReviewHtml = `
                         <div style="margin-top: 16px;">
                             <button type="button" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 13px;"
-                                onclick="closeDetailModal(); openReviewModal('servis', null, null, ${service.id}, 'Servis Laptop: ${escapeAttr(service.merek_laptop)}')">
+                                onclick="closeDetailModal(); openReviewModal('servis', null, null, ${service.id})">
                                 ⭐ Beri Ulasan Servis
                             </button>
                         </div>
@@ -949,7 +949,7 @@
                     serviceComplaintHtml = `
                         <div style="margin-top:12px;">
                             <button type="button" class="btn btn-outline" style="width: 100%; padding: 12px; font-size: 13px; border-color: #D97706; color: #D97706; background: transparent;" 
-                                onclick="closeDetailModal(); openComplaintModal('servis', ${service.id}, 'Servis ${escapeAttr(service.kode_servis)}')">
+                                onclick="closeDetailModal(); openComplaintModal('servis', ${service.id})">
                                 <i data-lucide="alert-circle" class="icon icon-sm" style="color:#D97706; margin-right:6px;"></i> Laporkan Masalah / Komplain
                             </button>
                         </div>
@@ -1161,7 +1161,7 @@
                         } else {
                             reviewBtn = `
                                 <button type="button" class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; border-radius: 6px; margin-top: 6px;" 
-                                    onclick="event.stopPropagation(); closeDetailModal(); openReviewModal('produk', ${order.id_pesanan}, ${p.id_produk}, null, '${escapeAttr(p.nama_produk)}')">
+                                    onclick="event.stopPropagation(); closeDetailModal(); openReviewModal('produk', ${order.id_pesanan}, ${p.id_produk}, null)">
                                     Beri Review
                                 </button>
                             `;
@@ -1214,7 +1214,7 @@
                         complaintHtml = `
                             <div style="margin-top:16px;">
                                 <button type="button" class="btn btn-outline" style="width: 100%; padding: 12px; font-size: 13px; border-color: #D97706; color: #D97706; background: transparent;" 
-                                    onclick="closeDetailModal(); openComplaintModal('pesanan', ${order.id_pesanan}, 'Pesanan #${order.id_pesanan}')">
+                                    onclick="closeDetailModal(); openComplaintModal('pesanan', ${order.id_pesanan})">
                                     <i data-lucide="alert-circle" class="icon icon-sm" style="color: #D97706; margin-right: 6px;"></i> Laporkan Masalah / Komplain
                                 </button>
                             </div>
@@ -1433,6 +1433,22 @@
             document.getElementById('review-pesanan-id').value = pesananId || '';
             document.getElementById('review-produk-id').value = produkId || '';
             document.getElementById('review-servis-id').value = servisId || '';
+            
+            if (!itemName) {
+                if (tipe === 'produk') {
+                    const order = allOrders.find(o => Number(o.id_pesanan) === Number(pesananId));
+                    if (order) {
+                        const details = order.detail || order.details || [];
+                        const p = details.find(item => Number(item.id_produk) === Number(produkId))?.produk || {};
+                        itemName = p.nama_produk || 'Produk';
+                    } else {
+                        itemName = 'Produk';
+                    }
+                } else if (tipe === 'servis') {
+                    const service = allServices.find(s => Number(s.id) === Number(servisId));
+                    itemName = 'Servis Laptop: ' + (service ? (service.merek_laptop || 'Laptop') : 'Laptop');
+                }
+            }
             document.getElementById('review-item-name').textContent = itemName;
             setRatingValue(0);
             document.getElementById('review-komentar').value = '';
@@ -1504,6 +1520,16 @@
         function openComplaintModal(tipe, refId, refTitle) {
             document.getElementById('complaint-tipe').value = tipe;
             document.getElementById('complaint-ref-id').value = refId;
+            
+            if (!refTitle) {
+                if (tipe === 'pesanan') {
+                    refTitle = 'Pesanan #' + refId;
+                } else if (tipe === 'servis') {
+                    const service = allServices.find(s => Number(s.id) === Number(refId));
+                    refTitle = 'Servis ' + (service ? (service.kode_servis || '') : '');
+                }
+            }
+            
             document.getElementById('complaint-ref-title').textContent = refTitle;
             document.getElementById('complaint-judul').value = '';
             document.getElementById('complaint-deskripsi').value = '';
