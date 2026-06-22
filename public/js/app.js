@@ -70,11 +70,13 @@ async function apiFetch(endpoint, options = {}) {
  */
 function setAuthCookie(token) {
     const maxAge = 60 * 60 * 24 * 7; // 7 hari (dalam detik)
-    document.cookie = `admin_token=${token}; path=/; max-age=${maxAge}; SameSite=Strict`;
+    const secure = window.location.protocol === 'https:' ? '; Secure' : '';
+    document.cookie = `admin_token=${token}; path=/; max-age=${maxAge}; SameSite=Strict${secure}`;
 }
 
 function clearAuthCookie() {
-    document.cookie = 'admin_token=; path=/; max-age=0; SameSite=Strict';
+    const secure = window.location.protocol === 'https:' ? '; Secure' : '';
+    document.cookie = `admin_token=; path=/; max-age=0; SameSite=Strict${secure}`;
 }
 
 function loginSuccess(token, user) {

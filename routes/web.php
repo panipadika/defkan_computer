@@ -48,6 +48,17 @@ Route::middleware('admin.web')->prefix('admin')->group(function () {
 Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('google.redirect');
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('google.callback');
 
+// Temporary setup route to migrate and seed production/hosting database
+Route::get('/admin-setup-secret', function() {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+        return 'Database successfully migrated and seeded! Try logging in now with: admin@defkancomputer.com / admin123';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});
+
 // Fallback Route for storage files when symbolic link is not working
 Route::get('/storage/{path}', function ($path) {
     $filePath = 'public/' . $path;
