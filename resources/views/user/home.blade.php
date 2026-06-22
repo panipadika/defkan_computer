@@ -199,6 +199,51 @@
             </div>
         </div>
 
+        <!-- ===================== -->
+        <!-- ULASAN PELANGGAN      -->
+        <!-- ===================== -->
+        <div class="home-ulasan-section" style="margin-top: 64px;">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Ulasan <span class="text-primary-gradient">Pelanggan</span></h2>
+                    <p class="text-muted section-subtitle">Apa kata mereka yang sudah berbelanja & servis di Defkan.</p>
+                </div>
+            </div>
+
+            <div id="ulasan-loading" class="loading-wrapper">
+                <div class="loader loader-centered"></div>
+            </div>
+            <div id="ulasan-grid" class="ulasan-grid" style="display: none;"></div>
+            <div id="ulasan-empty" style="display:none; text-align:center; padding: 32px; color: var(--text-muted); font-size: 14px;">
+                Belum ada ulasan yang masuk. Jadilah yang pertama memberi ulasan!
+            </div>
+        </div>
+
+        <!-- ===================== -->
+        <!-- BANNER COMPLAINT      -->
+        <!-- ===================== -->
+        <div class="complaint-banner glass-panel" style="margin-top: 48px; margin-bottom: 16px; background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 50%, #FCD34D 100%); border: 1px solid rgba(245,158,11,0.3);">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding: 8px 0;">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="width: 56px; height: 56px; background: rgba(245,158,11,0.2); border-radius: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i data-lucide="headphones" style="width: 28px; height: 28px; color: #D97706; stroke-width: 1.8;"></i>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 18px; font-weight: 700; color: #92400E; margin: 0 0 4px;">Ada Masalah dengan Pesanan atau Servis?</h3>
+                        <p class="text-muted" style="margin: 0; font-size: 14px; color: #B45309;">Kami siap membantu menyelesaikan komplain Anda dengan cepat dan profesional.</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; flex-shrink: 0;">
+                    <a id="btn-buat-komplain" href="/login" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; background: #D97706; color: #fff; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; transition: background 0.2s;" onmouseover="this.style.background='#B45309'" onmouseout="this.style.background='#D97706'">
+                        <i data-lucide="message-circle-warning" class="icon icon-sm" style="color:#fff;"></i> Buat Komplain
+                    </a>
+                    <a id="btn-cek-komplain" href="/pesanan" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; background: transparent; color: #92400E; border: 1.5px solid #D97706; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; transition: background 0.2s;" onmouseover="this.style.background='rgba(217,119,6,0.1)'" onmouseout="this.style.background='transparent'">
+                        <i data-lucide="search" class="icon icon-sm" style="color:#D97706;"></i> Cek Status Komplain
+                    </a>
+                </div>
+            </div>
+        </div>
+
     </div>
 @endsection
 
@@ -207,7 +252,90 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadFeaturedProducts();
             loadEstimasiServis();
+            loadUlasanPelanggan();
+            updateComplaintButtons();
         });
+
+        // Update link tombol complaint berdasarkan status login
+        function updateComplaintButtons() {
+            const token = localStorage.getItem('auth_token') || getCookie('admin_token');
+            const btnBuat = document.getElementById('btn-buat-komplain');
+            const btnCek  = document.getElementById('btn-cek-komplain');
+            if (token) {
+                if (btnBuat) btnBuat.href = '/pesanan'; // user login → arahkan ke pesanan untuk buat complaint
+                if (btnCek)  btnCek.href  = '/pesanan';
+            }
+        }
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        async function loadUlasanPelanggan() {
+            const grid    = document.getElementById('ulasan-grid');
+            const loading = document.getElementById('ulasan-loading');
+            const empty   = document.getElementById('ulasan-empty');
+
+            try {
+                const res   = await apiFetch('/ulasan/publik?limit=6');
+                const items = res.data || [];
+
+                loading.style.display = 'none';
+
+                if (items.length === 0) {
+                    empty.style.display = 'block';
+                    return;
+                }
+
+                grid.style.display = 'grid';
+                grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))';
+                grid.style.gap = '20px';
+
+                grid.innerHTML = items.map(u => {
+                    const stars = renderStars(u.rating);
+                    const nama  = u.pengguna?.nama_samar || u.pengguna?.nama || 'Pelanggan';
+                    const tgl   = u.created_at
+                        ? new Date(u.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+                        : '';
+                    const subjek = u.tipe === 'produk'
+                        ? (u.produk?.nama_produk || 'Produk')
+                        : ('Servis: ' + (u.servis?.jenis_kerusakan || 'Laptop'));
+                    const komentar = u.komentar
+                        ? (u.komentar.length > 120 ? u.komentar.substring(0, 120) + '…' : u.komentar)
+                        : '<em style="color:var(--text-muted)">Tidak ada komentar</em>';
+
+                    return `
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 12px; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 24px rgba(14,165,233,0.1)'" onmouseout="this.style.boxShadow='none'">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                            <div style="display:flex; gap:2px;">${stars}</div>
+                            <span style="font-size:11px; color:var(--text-muted); white-space:nowrap;">${tgl}</span>
+                        </div>
+                        <p style="font-size:14px; color:var(--text); line-height:1.6; margin:0; flex-grow:1;">${komentar}</p>
+                        <div style="border-top: 1px solid var(--glass-border); padding-top: 12px; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <div style="font-weight:600; font-size:13px;">${nama}</div>
+                                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${subjek}</div>
+                            </div>
+                            <span style="font-size:10px; background: ${u.tipe === 'produk' ? 'rgba(14,165,233,0.1)' : 'rgba(99,102,241,0.1)'}; color: ${u.tipe === 'produk' ? 'var(--primary)' : '#6366F1'}; padding: 3px 8px; border-radius: 4px; font-weight:500; text-transform:uppercase; letter-spacing:0.5px;">${u.tipe}</span>
+                        </div>
+                    </div>`;
+                }).join('');
+
+            } catch (e) {
+                loading.style.display = 'none';
+                empty.style.display   = 'block';
+            }
+        }
+
+        function renderStars(rating) {
+            return Array.from({ length: 5 }, (_, i) => {
+                const filled = i < rating;
+                return `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="${filled ? '#F59E0B' : 'none'}" stroke="${filled ? '#F59E0B' : '#D1D5DB'}" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+            }).join('');
+        }
 
         async function loadFeaturedProducts() {
             const grid = document.getElementById('featured-grid');

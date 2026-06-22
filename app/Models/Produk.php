@@ -72,6 +72,33 @@ class Produk extends Model
         return $this->hasMany(Keranjang::class, 'id_produk', 'id_produk');
     }
 
+    /**
+     * Produk bisa memiliki banyak ulasan dari pembeli.
+     */
+    public function ulasan()
+    {
+        return $this->hasMany(Ulasan::class, 'id_produk', 'id_produk');
+    }
+
+    /**
+     * Rating rata-rata produk (hanya ulasan visible).
+     */
+    public function getRatingRataRataAttribute(): float
+    {
+        return round(
+            $this->ulasan()->where('is_visible', true)->avg('rating') ?? 0,
+            1
+        );
+    }
+
+    /**
+     * Jumlah ulasan visible untuk produk ini.
+     */
+    public function getJumlahUlasanAttribute(): int
+    {
+        return $this->ulasan()->where('is_visible', true)->count();
+    }
+
     // ------------------------------------------------
     // Accessor
     // ------------------------------------------------

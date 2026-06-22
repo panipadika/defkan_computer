@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ChatRoom;
+use App\Models\Complaint;
 use App\Models\Pengguna;
 use App\Models\Pesanan;
 use App\Models\Produk;
 use App\Models\Servis;
+use App\Models\Ulasan;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -351,14 +353,16 @@ class AdminController extends Controller
         $chatUnread = ChatRoom::whereHas('messages', function ($q) {
             $q->where('is_admin', '=', false)->where('is_read', '=', false);
         })->count();
+        $complaintMenunggu = Complaint::where('status', 'menunggu')->count();
 
         return response()->json([
             'status' => 'success',
             'data' => [
-                'produk_habis' => $produkHabis,
-                'pesanan_baru' => $pesananBaru,
-                'servis_baru' => $servisBaru,
-                'chat_unread' => $chatUnread,
+                'produk_habis'       => $produkHabis,
+                'pesanan_baru'       => $pesananBaru,
+                'servis_baru'        => $servisBaru,
+                'chat_unread'        => $chatUnread,
+                'complaint_menunggu' => $complaintMenunggu,
             ],
         ]);
     }

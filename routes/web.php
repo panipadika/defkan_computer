@@ -40,6 +40,8 @@ Route::middleware('admin.web')->prefix('admin')->group(function () {
     Route::get('/chat',     fn ()      => view('admin.chat'));
     Route::get('/pelanggan', fn ()     => view('admin.pelanggan'));
     Route::get('/pendapatan', fn ()    => view('admin.pendapatan'));
+    Route::get('/ulasan',   fn ()      => view('admin.ulasan'));
+    Route::get('/complaint', fn ()     => view('admin.complaint'));
 });
 
 // Google Login (Web redirect flow)

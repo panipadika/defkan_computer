@@ -7,11 +7,15 @@ use App\Http\Controllers\Admin\ServisController;
 use App\Http\Controllers\Admin\PesananController;
 use App\Http\Controllers\Admin\ChatApiController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\UlasanAdminController;
+use App\Http\Controllers\Admin\ComplaintAdminController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\User\KeranjangController;
 use App\Http\Controllers\User\RekomendasiLaptopController;
+use App\Http\Controllers\User\UlasanController;
+use App\Http\Controllers\User\ComplaintController;
 use App\Http\Controllers\Shared\EkspedisiController;
 use App\Http\Controllers\Shared\SoftwareController;
 
@@ -38,6 +42,10 @@ Route::post('/rekomendasi/laptop', [RekomendasiLaptopController::class, 'recomme
 
 Route::get('/servis/estimasi', [ServisController::class, 'estimasi']);
 Route::get('/servis/track/{kode_servis}', [ServisController::class, 'tracking']);
+
+// Endpoint publik ulasan beranda (tidak perlu login)
+Route::get('/ulasan/publik', [UlasanController::class, 'publik']);
+Route::get('/produk/{id}/ulasan', [UlasanController::class, 'produkReviews']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/servis', [ServisController::class, 'store']);
@@ -66,6 +74,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/pesanan', [PesananController::class, 'store']);
     Route::post('/pesanan/{id}/bayar', [PesananController::class, 'uploadBuktiPembayaran']);
 
+    // ── Ulasan (Review) ──────────────────────────────────────────────────────
+    Route::post('/ulasan', [UlasanController::class, 'store']);
+    Route::get('/ulasan-saya', [UlasanController::class, 'myReviews']);
+
+    // ── Complaint ────────────────────────────────────────────────────────────
+    Route::post('/complaint', [ComplaintController::class, 'store']);
+    Route::get('/complaint-saya', [ComplaintController::class, 'myComplaints']);
+    Route::get('/complaint/{id}', [ComplaintController::class, 'show']);
+
     Route::middleware('admin')->group(function () {
         Route::post('/produk', [ProdukController::class, 'storeWithUpload']);
         Route::put('/produk/{id}', [ProdukController::class, 'update']);
@@ -92,5 +109,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/admin/chat/rooms', [ChatApiController::class, 'adminListRooms']);
         Route::post('/admin/chat/reply', [ChatApiController::class, 'adminReply']);
         Route::delete('/admin/chat/rooms/{id}', [ChatApiController::class, 'deleteRoom']);
+
+        // ── Admin: Ulasan ────────────────────────────────────────────────────
+        Route::get('/admin/ulasan', [UlasanAdminController::class, 'index']);
+        Route::delete('/admin/ulasan/{id}', [UlasanAdminController::class, 'destroy']);
+        Route::patch('/admin/ulasan/{id}/visibility', [UlasanAdminController::class, 'toggleVisibility']);
+
+        // ── Admin: Complaint ─────────────────────────────────────────────────
+        Route::get('/admin/complaint', [ComplaintAdminController::class, 'index']);
+        Route::get('/admin/complaint/{id}', [ComplaintAdminController::class, 'show']);
+        Route::post('/admin/complaint/{id}/respond', [ComplaintAdminController::class, 'respond']);
     });
 });

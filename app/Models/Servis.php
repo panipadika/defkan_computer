@@ -34,6 +34,19 @@ class Servis extends Model
         return $this->belongsTo(Pengguna::class, 'pengguna_id', 'id_pengguna');
     }
 
+    // Relasi ke Ulasan (satu servis, satu ulasan per pengguna)
+    public function ulasan()
+    {
+        return $this->hasOne(Ulasan::class, 'id_servis', 'id');
+    }
+
+    // Relasi ke Complaint (satu servis bisa punya satu complaint)
+    public function complaint()
+    {
+        return $this->hasOne(Complaint::class, 'id_referensi')
+            ->where('tipe', 'servis');
+    }
+
     public function estimasi()
     {
         return $this->belongsTo(EstimasiServis::class, 'jenis_kerusakan', 'jenis_kerusakan');

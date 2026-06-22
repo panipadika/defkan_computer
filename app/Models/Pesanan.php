@@ -39,4 +39,17 @@ class Pesanan extends Model
     {
         return $this->belongsTo(Pengguna::class, 'id_pengguna', 'id_pengguna');
     }
+
+    // Relasi ke Ulasan (satu pesanan bisa punya banyak ulasan, 1 per produk)
+    public function ulasan()
+    {
+        return $this->hasMany(Ulasan::class, 'id_pesanan', 'id_pesanan');
+    }
+
+    // Relasi ke Complaint (satu pesanan bisa punya satu complaint)
+    public function complaint()
+    {
+        return $this->hasOne(Complaint::class, 'id_referensi')
+            ->where('tipe', 'pesanan');
+    }
 }
