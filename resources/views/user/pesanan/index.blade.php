@@ -1140,6 +1140,7 @@
             try {
                 const res = await apiFetch(`/pesanan/${id}`);
                 const order = res.data;
+                const oStatus = String(order.status || '').toLowerCase();
                 const details = order.detail || order.details || [];
                 const date = new Date(order.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
@@ -1149,7 +1150,6 @@
                     const isReviewed = ulasanList.some(r => Number(r.id_produk) === Number(p.id_produk));
                     
                     let reviewBtn = '';
-                    const oStatus = String(order.status || '').toLowerCase();
                     if (oStatus === 'selesai') {
                         if (isReviewed) {
                             reviewBtn = `<span class="status-badge status-selesai" style="font-size: 11px; padding: 4px 10px; margin-top: 6px; display: inline-block;">★ Sudah Direview</span>`;
