@@ -51,7 +51,7 @@ Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleC
 // Temporary setup route to migrate and seed production/hosting database
 Route::get('/admin-setup-secret', function() {
     try {
-        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true]);
         \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
         return 'Database successfully migrated and seeded! Try logging in now with: admin@defkancomputer.com / admin123';
     } catch (\Exception $e) {
