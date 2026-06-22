@@ -636,6 +636,11 @@
 
 @push('scripts')
     <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            alert("JS Error: " + message + " at line " + lineno + ":" + colno + "\nSource: " + source);
+            return false;
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             if (!isLoggedIn()) {
                 window.location.href = '/login';
