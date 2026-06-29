@@ -910,7 +910,7 @@
                     serviceReviewHtml = `
                         <div style="margin-top: 16px;">
                             <button type="button" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 13px;"
-                                onclick="closeDetailModal(); openReviewModal('servis', null, null, ${service.id})">
+                                data-action="open-review" data-servis-id="${service.id}">
                                 ⭐ Beri Ulasan Servis
                             </button>
                         </div>
@@ -948,8 +948,8 @@
                 } else {
                     serviceComplaintHtml = `
                         <div style="margin-top:12px;">
-                            <button type="button" class="btn btn-outline" style="width: 100%; padding: 12px; font-size: 13px; border-color: #D97706; color: #D97706; background: transparent;" 
-                                onclick="closeDetailModal(); openComplaintModal('servis', ${service.id})">
+                            <button type="button" class="btn btn-outline" style="width: 100%; padding: 12px; font-size: 13px; border-color: #D97706; color: #D97706; background: transparent;"
+                                data-action="open-complaint" data-tipe="servis" data-ref-id="${service.id}">
                                 <i data-lucide="alert-circle" class="icon icon-sm" style="color:#D97706; margin-right:6px;"></i> Laporkan Masalah / Komplain
                             </button>
                         </div>
@@ -1041,6 +1041,25 @@
             `;
             modal.style.display = 'flex';
             lucide.createIcons();
+
+            // Pasang event listener pada tombol aksi servis
+            const serviceContent = document.getElementById('detail-content');
+            if (serviceContent) {
+                serviceContent.querySelectorAll('[data-action="open-review"]').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        closeDetailModal();
+                        openReviewModal('servis', null, null, this.dataset.servisId);
+                    });
+                });
+                serviceContent.querySelectorAll('[data-action="open-complaint"]').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        closeDetailModal();
+                        openComplaintModal(this.dataset.tipe, this.dataset.refId);
+                    });
+                });
+            }
         }
 
         async function loadOrders() {
@@ -1160,8 +1179,8 @@
                             reviewBtn = `<span class="status-badge status-selesai" style="font-size: 11px; padding: 4px 10px; margin-top: 6px; display: inline-block;">★ Sudah Direview</span>`;
                         } else {
                             reviewBtn = `
-                                <button type="button" class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; border-radius: 6px; margin-top: 6px;" 
-                                    onclick="event.stopPropagation(); closeDetailModal(); openReviewModal('produk', ${order.id_pesanan}, ${p.id_produk}, null)">
+                                <button type="button" class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; border-radius: 6px; margin-top: 6px;"
+                                    data-action="open-review" data-pesanan-id="${order.id_pesanan}" data-produk-id="${p.id_produk || ''}">
                                     Beri Review
                                 </button>
                             `;
@@ -1213,8 +1232,8 @@
                     } else {
                         complaintHtml = `
                             <div style="margin-top:16px;">
-                                <button type="button" class="btn btn-outline" style="width: 100%; padding: 12px; font-size: 13px; border-color: #D97706; color: #D97706; background: transparent;" 
-                                    onclick="closeDetailModal(); openComplaintModal('pesanan', ${order.id_pesanan})">
+                                <button type="button" class="btn btn-outline" style="width: 100%; padding: 12px; font-size: 13px; border-color: #D97706; color: #D97706; background: transparent;"
+                                    data-action="open-complaint" data-tipe="pesanan" data-ref-id="${order.id_pesanan}">
                                     <i data-lucide="alert-circle" class="icon icon-sm" style="color: #D97706; margin-right: 6px;"></i> Laporkan Masalah / Komplain
                                 </button>
                             </div>
@@ -1303,6 +1322,22 @@
                     ` : ''}
                 `;
                 lucide.createIcons();
+
+                // Pasang event listener pada tombol aksi (lebih andal dari inline onclick pada innerHTML)
+                content.querySelectorAll('[data-action="open-review"]').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        closeDetailModal();
+                        openReviewModal('produk', this.dataset.pesananId, this.dataset.produkId, null);
+                    });
+                });
+                content.querySelectorAll('[data-action="open-complaint"]').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        closeDetailModal();
+                        openComplaintModal(this.dataset.tipe, this.dataset.refId);
+                    });
+                });
             } catch (err) {
                 content.innerHTML = `<p style="text-align:center; color:var(--danger);">Gagal memuat detail: ${err.message}</p>`;
             }
