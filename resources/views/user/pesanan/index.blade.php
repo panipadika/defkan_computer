@@ -1429,6 +1429,14 @@
         }
 
         function openReviewModal(tipe, pesananId, produkId, servisId, itemName) {
+            console.log('[DEBUG] openReviewModal called', {tipe, pesananId, produkId, servisId, itemName});
+            
+            const reviewModal = document.getElementById('review-modal');
+            if (!reviewModal) {
+                alert('ERROR: Elemen #review-modal tidak ditemukan di halaman!');
+                return;
+            }
+            
             document.getElementById('review-tipe').value = tipe;
             document.getElementById('review-pesanan-id').value = pesananId || '';
             document.getElementById('review-produk-id').value = produkId || '';
@@ -1454,12 +1462,14 @@
             document.getElementById('review-komentar').value = '';
             document.getElementById('review-foto').value = '';
             
-            document.getElementById('review-modal').style.display = 'flex';
+            reviewModal.style.cssText = 'display:flex !important; position:fixed !important; inset:0 !important; z-index:99999 !important; background:rgba(15,23,42,0.85) !important; justify-content:center !important; align-items:center !important; backdrop-filter:blur(8px) !important;';
+            console.log('[DEBUG] review-modal display set to flex:', reviewModal.style.display);
             if (window.lucide) lucide.createIcons();
         }
 
         function closeReviewModal() {
-            document.getElementById('review-modal').style.display = 'none';
+            const m = document.getElementById('review-modal');
+            m.style.cssText = 'display:none;';
         }
 
         async function handleReviewSubmit(e) {
@@ -1535,12 +1545,14 @@
             document.getElementById('complaint-deskripsi').value = '';
             document.getElementById('complaint-foto').value = '';
 
-            document.getElementById('complaint-modal').style.display = 'flex';
+            const complaintModal = document.getElementById('complaint-modal');
+            complaintModal.style.cssText = 'display:flex !important; position:fixed !important; inset:0 !important; z-index:99999 !important; background:rgba(15,23,42,0.85) !important; justify-content:center !important; align-items:center !important; backdrop-filter:blur(8px) !important;';
             if (window.lucide) lucide.createIcons();
         }
 
         function closeComplaintModal() {
-            document.getElementById('complaint-modal').style.display = 'none';
+            const m = document.getElementById('complaint-modal');
+            m.style.cssText = 'display:none;';
         }
 
         async function handleComplaintSubmit(e) {
