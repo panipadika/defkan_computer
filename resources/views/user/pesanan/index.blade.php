@@ -1047,16 +1047,24 @@
             if (serviceContent) {
                 serviceContent.querySelectorAll('[data-action="open-review"]').forEach(btn => {
                     btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        closeDetailModal();
-                        openReviewModal('servis', null, null, this.dataset.servisId);
+                        try {
+                            e.stopPropagation();
+                            closeDetailModal();
+                            openReviewModal('servis', null, null, this.dataset.servisId);
+                        } catch (err) {
+                            alert('Gagal membuka review servis: ' + err.message + '\n' + err.stack);
+                        }
                     });
                 });
                 serviceContent.querySelectorAll('[data-action="open-complaint"]').forEach(btn => {
                     btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        closeDetailModal();
-                        openComplaintModal(this.dataset.tipe, this.dataset.refId);
+                        try {
+                            e.stopPropagation();
+                            closeDetailModal();
+                            openComplaintModal(this.dataset.tipe, this.dataset.refId);
+                        } catch (err) {
+                            alert('Gagal membuka complaint servis: ' + err.message + '\n' + err.stack);
+                        }
                     });
                 });
             }
@@ -1326,16 +1334,24 @@
                 // Pasang event listener pada tombol aksi (lebih andal dari inline onclick pada innerHTML)
                 content.querySelectorAll('[data-action="open-review"]').forEach(btn => {
                     btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        closeDetailModal();
-                        openReviewModal('produk', this.dataset.pesananId, this.dataset.produkId, null);
+                        try {
+                            e.stopPropagation();
+                            closeDetailModal();
+                            openReviewModal('produk', this.dataset.pesananId, this.dataset.produkId, null);
+                        } catch (err) {
+                            alert('Gagal membuka review produk: ' + err.message + '\n' + err.stack);
+                        }
                     });
                 });
                 content.querySelectorAll('[data-action="open-complaint"]').forEach(btn => {
                     btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        closeDetailModal();
-                        openComplaintModal(this.dataset.tipe, this.dataset.refId);
+                        try {
+                            e.stopPropagation();
+                            closeDetailModal();
+                            openComplaintModal(this.dataset.tipe, this.dataset.refId);
+                        } catch (err) {
+                            alert('Gagal membuka complaint produk: ' + err.message + '\n' + err.stack);
+                        }
                     });
                 });
             } catch (err) {
@@ -1464,42 +1480,46 @@
         }
 
         function openReviewModal(tipe, pesananId, produkId, servisId, itemName) {
-            console.log('[DEBUG] openReviewModal called', {tipe, pesananId, produkId, servisId, itemName});
-            
-            const reviewModal = document.getElementById('review-modal');
-            if (!reviewModal) {
-                alert('ERROR: Elemen #review-modal tidak ditemukan di halaman!');
-                return;
-            }
-            
-            document.getElementById('review-tipe').value = tipe;
-            document.getElementById('review-pesanan-id').value = pesananId || '';
-            document.getElementById('review-produk-id').value = produkId || '';
-            document.getElementById('review-servis-id').value = servisId || '';
-            
-            if (!itemName) {
-                if (tipe === 'produk') {
-                    const order = allOrders.find(o => Number(o.id_pesanan) === Number(pesananId));
-                    if (order) {
-                        const details = order.detail || order.details || [];
-                        const p = details.find(item => Number(item.id_produk) === Number(produkId))?.produk || {};
-                        itemName = p.nama_produk || 'Produk';
-                    } else {
-                        itemName = 'Produk';
-                    }
-                } else if (tipe === 'servis') {
-                    const service = allServices.find(s => Number(s.id) === Number(servisId));
-                    itemName = 'Servis Laptop: ' + (service ? (service.merek_laptop || 'Laptop') : 'Laptop');
+            try {
+                console.log('[DEBUG] openReviewModal called', {tipe, pesananId, produkId, servisId, itemName});
+                
+                const reviewModal = document.getElementById('review-modal');
+                if (!reviewModal) {
+                    alert('ERROR: Elemen #review-modal tidak ditemukan di halaman!');
+                    return;
                 }
+                
+                document.getElementById('review-tipe').value = tipe;
+                document.getElementById('review-pesanan-id').value = pesananId || '';
+                document.getElementById('review-produk-id').value = produkId || '';
+                document.getElementById('review-servis-id').value = servisId || '';
+                
+                if (!itemName) {
+                    if (tipe === 'produk') {
+                        const order = allOrders.find(o => Number(o.id_pesanan) === Number(pesananId));
+                        if (order) {
+                            const details = order.detail || order.details || [];
+                            const p = details.find(item => Number(item.id_produk) === Number(produkId))?.produk || {};
+                            itemName = p.nama_produk || 'Produk';
+                        } else {
+                            itemName = 'Produk';
+                        }
+                    } else if (tipe === 'servis') {
+                        const service = allServices.find(s => Number(s.id) === Number(servisId));
+                        itemName = 'Servis Laptop: ' + (service ? (service.merek_laptop || 'Laptop') : 'Laptop');
+                    }
+                }
+                document.getElementById('review-item-name').textContent = itemName;
+                setRatingValue(0);
+                document.getElementById('review-komentar').value = '';
+                document.getElementById('review-foto').value = '';
+                
+                reviewModal.style.cssText = 'display:flex !important; position:fixed !important; inset:0 !important; z-index:99999 !important; background:rgba(15,23,42,0.85) !important; justify-content:center !important; align-items:center !important; backdrop-filter:blur(8px) !important;';
+                console.log('[DEBUG] review-modal display set to flex:', reviewModal.style.display);
+                if (window.lucide) lucide.createIcons();
+            } catch (err) {
+                alert('JS Error in openReviewModal: ' + err.message + '\n' + err.stack);
             }
-            document.getElementById('review-item-name').textContent = itemName;
-            setRatingValue(0);
-            document.getElementById('review-komentar').value = '';
-            document.getElementById('review-foto').value = '';
-            
-            reviewModal.style.cssText = 'display:flex !important; position:fixed !important; inset:0 !important; z-index:99999 !important; background:rgba(15,23,42,0.85) !important; justify-content:center !important; align-items:center !important; backdrop-filter:blur(8px) !important;';
-            console.log('[DEBUG] review-modal display set to flex:', reviewModal.style.display);
-            if (window.lucide) lucide.createIcons();
         }
 
         function closeReviewModal() {
@@ -1563,26 +1583,30 @@
         }
 
         function openComplaintModal(tipe, refId, refTitle) {
-            document.getElementById('complaint-tipe').value = tipe;
-            document.getElementById('complaint-ref-id').value = refId;
-            
-            if (!refTitle) {
-                if (tipe === 'pesanan') {
-                    refTitle = 'Pesanan #' + refId;
-                } else if (tipe === 'servis') {
-                    const service = allServices.find(s => Number(s.id) === Number(refId));
-                    refTitle = 'Servis ' + (service ? (service.kode_servis || '') : '');
+            try {
+                document.getElementById('complaint-tipe').value = tipe;
+                document.getElementById('complaint-ref-id').value = refId;
+                
+                if (!refTitle) {
+                    if (tipe === 'pesanan') {
+                        refTitle = 'Pesanan #' + refId;
+                    } else if (tipe === 'servis') {
+                        const service = allServices.find(s => Number(s.id) === Number(refId));
+                        refTitle = 'Servis ' + (service ? (service.kode_servis || '') : '');
+                    }
                 }
+                
+                document.getElementById('complaint-ref-title').textContent = refTitle;
+                document.getElementById('complaint-judul').value = '';
+                document.getElementById('complaint-deskripsi').value = '';
+                document.getElementById('complaint-foto').value = '';
+    
+                const complaintModal = document.getElementById('complaint-modal');
+                complaintModal.style.cssText = 'display:flex !important; position:fixed !important; inset:0 !important; z-index:99999 !important; background:rgba(15,23,42,0.85) !important; justify-content:center !important; align-items:center !important; backdrop-filter:blur(8px) !important;';
+                if (window.lucide) lucide.createIcons();
+            } catch (err) {
+                alert('JS Error in openComplaintModal: ' + err.message + '\n' + err.stack);
             }
-            
-            document.getElementById('complaint-ref-title').textContent = refTitle;
-            document.getElementById('complaint-judul').value = '';
-            document.getElementById('complaint-deskripsi').value = '';
-            document.getElementById('complaint-foto').value = '';
-
-            const complaintModal = document.getElementById('complaint-modal');
-            complaintModal.style.cssText = 'display:flex !important; position:fixed !important; inset:0 !important; z-index:99999 !important; background:rgba(15,23,42,0.85) !important; justify-content:center !important; align-items:center !important; backdrop-filter:blur(8px) !important;';
-            if (window.lucide) lucide.createIcons();
         }
 
         function closeComplaintModal() {
